@@ -23,7 +23,7 @@ void CueLaserGraphic :: update(float time, bool isPlaying){
     
     if(isActive(time)) {
 		laser.setTargetZone(targetZone);
-      	graphic.renderToLaser(laser);
+        laser.drawLaserGraphic(graphic);
     }
 
 

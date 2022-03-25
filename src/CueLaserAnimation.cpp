@@ -30,7 +30,7 @@ void CueLaserAnimation :: update(float time, bool isPlaying){
 		if(index<0) index = 0; 
 		ofxLaser::Graphic &graphic = svgLoader.getLaserGraphic(index);
 		laser.setTargetZone(targetZone); 
-		graphic.renderToLaser(laser);
+		laser.drawLaserGraphic(graphic);
 		
 		//ofLog(OF_LOG_NOTICE, "index : " + ofToString(index)+ " cueTime : " + ofToString(cueTime) + " duration : " + ofToString(duration)+ " numFrames : " + ofToString(numFrames)); 
 	
@@ -61,8 +61,8 @@ void CueLaserAnimation :: drawCueBlock() {
 	ofFill();
 	ofSetColor(fillColour);
 	ofRectangle progressRect(drawRect);
-	if(svgLoader.loadCount<getNumFrames()) {
-		progressRect.setWidth(ofMap(svgLoader.loadCount, 0, getNumFrames(), 0, round(drawRect.getWidth())));
+	if(svgLoader.getLoadedCount()<getNumFrames()) {
+		progressRect.setWidth(ofMap(svgLoader.getLoadedCount(), 0, getNumFrames(), 0, round(drawRect.getWidth())));
 	}
 	
 	ofDrawRectangle(progressRect);

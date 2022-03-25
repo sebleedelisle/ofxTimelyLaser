@@ -70,7 +70,7 @@ void CueLaserGraphicTransition :: update(float time, bool isPlaying){
 			}
 			
 		} else {
-			graphic.renderToLaser(laser);
+			laser.drawLaserGraphic(graphic);
 		}
 		
 		
