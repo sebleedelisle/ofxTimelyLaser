@@ -19,18 +19,40 @@ void CueLaserAnimation :: loadSVGSequence(string filename, int targetzone){
 }
 void CueLaserAnimation :: update(float time, bool isPlaying){
 	
-	autoSetEnd();
+    if(!initialised && svgLoader.hasFinishedLoading()) {
+        updateColourList();
+        autoSetEnd();
+        initialised = true;
+    }
 	
 	if(isActive(time)) {
-		
-		//laser.setTargetZone(targetZone); // only relevant if we're in OFXLASER_ZONE_MANUAL mode
-		
+
 		float cueTime = time - getStart()-startPadding;
 		int index = round(cueTime * fps);
 		if(index<0) index = 0; 
 		ofxLaser::Graphic &graphic = svgLoader.getLaserGraphic(index);
-		laser.setTargetZone(targetZone); 
-		laser.drawLaserGraphic(graphic);
+		laser.setTargetZone(targetZone);
+        
+        
+        vector<ofPolyline*> & polylines = graphic.polylines;
+        vector<ofColor> & colours = graphic.colours;
+        
+        for(size_t i= 0; i<polylines.size(); i++) {
+            ofColor& colour = colours[i];
+            int col = colour.getHex();
+
+            if(zonesByColour.find(col)!=zonesByColour.end()) {
+                int zone = zonesByColour[col];
+                if(zone>=0) laser.setTargetZone(zone);
+                else laser.setTargetZone(targetZone);
+            } else {
+                laser.setTargetZone(targetZone);
+            }
+            laser.drawPoly(*polylines[i],colour, OFXLASER_PROFILE_DEFAULT);
+            
+        }
+        
+		//laser.drawLaserGraphic(graphic);
 		
 		//ofLog(OF_LOG_NOTICE, "index : " + ofToString(index)+ " cueTime : " + ofToString(cueTime) + " duration : " + ofToString(duration)+ " numFrames : " + ofToString(numFrames)); 
 	
@@ -40,6 +62,27 @@ void CueLaserAnimation :: update(float time, bool isPlaying){
 	
 }
 
+void CueLaserAnimation :: updateColourList() {
+    colourList.clear();
+    int numframes = svgLoader.frames.size();
+    for(int i = 0; i<numframes ; i++ ) {
+        ofxLaser::Graphic &graphic = svgLoader.getLaserGraphic(i);
+        for(ofColor& colour : graphic.colours) {
+            if(std::find(colourList.begin(), colourList.end(), colour)==colourList.end()) {
+                colourList.push_back(colour);
+            }
+            
+        }
+        
+    }
+    cout << name << endl;
+    for(ofColor& colour : colourList) {
+        cout << std::hex << colour.getHex()<< endl;
+    }
+    
+    
+    
+}
 void CueLaserAnimation :: autoSetEnd() {
 	setDuration ((float)numFrames/fps + startPadding + endPadding);
 	

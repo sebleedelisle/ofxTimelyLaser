@@ -32,7 +32,9 @@ public:
 	
 	virtual void drawCueBlock();
 		
-	void autoSetEnd(); 
+	void autoSetEnd();
+    void updateColourList();
+    
 	
 	int getNumFrames() { return numFrames;}
 	float getFPS() { return fps;}
@@ -44,6 +46,12 @@ public:
 	//int targetZone = 0;
 	
 	const string type = "CueLaserAnimation";
+    
+    map<int, int> zonesByColour;
+    vector<ofColor> colourList;
+    
+    bool initialised = false;
+
 	
 protected:
 	
